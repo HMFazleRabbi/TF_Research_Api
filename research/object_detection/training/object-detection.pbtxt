@@ -1,0 +1,10 @@
+item {
+  id: 1
+  name: 'Body'
+}
+
+item {
+  id: 2
+  name: 'pin'
+}
+

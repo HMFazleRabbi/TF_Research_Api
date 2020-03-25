@@ -12,6 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
+
+# *************************************************************
+#   Author       : HM Fazle Rabbi
+#   Description  : Training OD API
+#   Sample Command
+#   python model_main.py --model_dir training/Checkpoint --pipeline_config_path training/faster_rcnn_resnet50_coco.config --num_train_steps 50000  --eval_training_data True  --sample_1_of_n_eval_examples 25 
+#   Helpful links:
+#   tensorflow.python.framework.errors_impl.NotFoundError: Failed to create a directory: training/Checkpoint\export\Servo\temp-b'1585104018'; No such file or directory
+#   Date Modified: 20200325_1055
+#   Copyright © 2000, MV Technology Ltd. All rights reserved.
+# *************************************************************
 """Binary to run train and evaluation on object detection model."""
 
 from __future__ import absolute_import
@@ -107,3 +118,6 @@ def main(unused_argv):
 
 if __name__ == '__main__':
   tf.app.run()
+
+
+
