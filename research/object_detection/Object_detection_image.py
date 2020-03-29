@@ -30,8 +30,8 @@ from utils import label_map_util
 from utils import visualization_utils as vis_util
 
 # Name of the directory containing the object detection module we're using
-MODEL_NAME = 'inference_graph'
-IMAGE_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/train/852RN5302TFT008_18_1_1-u922.jpg'
+MODEL_NAME = 'inference_graph/V-05-Unterrichte'
+IMAGE_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_00/train/9608_t_1_90_r_1u303_1.jpg'
 
 # Grab path to current working directory
 CWD_PATH = os.getcwd()
@@ -97,6 +97,7 @@ image_expanded = np.expand_dims(image_rgb, axis=0)
 (boxes, scores, classes, num) = sess.run(
     [detection_boxes, detection_scores, detection_classes, num_detections],
     feed_dict={image_tensor: image_expanded})
+print("\nInference session successful!")
 
 # Draw the results of the detection (aka 'visulaize the results')
 
@@ -107,7 +108,10 @@ vis_util.visualize_boxes_and_labels_on_image_array(
     np.squeeze(scores),
     category_index,
     use_normalized_coordinates=True,
-    line_thickness=8,
+    max_boxes_to_draw=256,
+    line_thickness=3,
+    skip_scores=True,
+    skip_labels=True,
     min_score_thresh=0.60)
 
 # All the results have been drawn on image. Now display the image.

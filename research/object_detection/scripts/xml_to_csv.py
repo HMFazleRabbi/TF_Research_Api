@@ -24,7 +24,8 @@ def xml_to_csv(path):
     xml_df = pd.DataFrame(xml_list, columns=column_name)
     return xml_df
 
-
+def txt_merger(path):
+    
 def main():
     for folder in ['train','test']:
         image_path = os.path.join(os.getcwd(), ('images/' + folder))
@@ -33,4 +34,7 @@ def main():
         print('Successfully converted xml to csv.')
 
 
-main()
+
+if __name__ == "__main__":
+    main()
+    pass
