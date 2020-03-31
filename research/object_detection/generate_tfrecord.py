@@ -2,10 +2,10 @@
 Usage:
   # From tensorflow/models/
   # Create train data:
-  python generate_tfrecord.py --csv_input=images/train_labels.csv --image_dir=images/train --output_path=train.record
+  python generate_tfrecord.py --csv_input=images/train_labels.csv --image_dir=images/train --output_path=images/train.record
 
   # Create test data:
-  python generate_tfrecord.py --csv_input=images/test_labels.csv  --image_dir=images/test --output_path=test.record
+  python generate_tfrecord.py --csv_input=images/test_labels.csv  --image_dir=images/test --output_path=images/test.record
 """
 from __future__ import division
 from __future__ import print_function
@@ -98,7 +98,8 @@ def create_tf_example(group, path):
 def main(_):
     writer = tf.python_io.TFRecordWriter(FLAGS.output_path)
     path = os.path.join(os.getcwd(), FLAGS.image_dir)
-    examples = pd.read_csv(FLAGS.csv_input)
+    # examples = pd.read_csv(FLAGS.csv_input)
+    examples = pd.read_csv(FLAGS.csv_input).sample(frac=1).reset_index(drop=True)
     grouped = split(examples, 'filename')
     for group in grouped:
         tf_example = create_tf_example(group, path)

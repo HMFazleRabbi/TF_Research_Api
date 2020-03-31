@@ -69,6 +69,10 @@ python export_inference_graph \
     --output_directory path/to/exported_model_directory
 
 python export_inference_graph.py --input_type image_tensor  --pipeline_config_path training/faster_rcnn_resnet50_coco.config --trained_checkpoint_prefix D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/training/Checkpoint-lehreren/model.ckpt-100000 --output_directory inference_graph
+python export_inference_graph.py --input_type image_tensor  --pipeline_config_path training/faster_rcnn_resnet50_coco.config --trained_checkpoint_prefix training/Checkpoint-tolleausmalschade/model.ckpt-100000 --output_directory inference_graph/V-09-toleeausmalschlade --config_override "model{faster_rcnn {second_stage_post_processing {batch_non_max_suppression {score_threshold: 0.3 }}}}"
+
+
+    
 
 The expected output would be in the directory
 path/to/exported_model_directory (which is created if it does not exist)

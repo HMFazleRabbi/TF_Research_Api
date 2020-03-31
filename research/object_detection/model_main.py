@@ -17,8 +17,10 @@
 #   Author       : HM Fazle Rabbi
 #   Description  : Training OD API
 #   Sample Command
-#   python model_main.py --model_dir training/Checkpoint --pipeline_config_path training/faster_rcnn_resnet50_coco.config --num_train_steps 100  --eval_training_data True 
-#   python model_main.py --checkpoint_dir training/Checkpoint --pipeline_config_path training/faster_rcnn_resnet50_coco.config --run_once
+#   python model_main.py --model_dir training/Checkpoint-tolleausmalschade --pipeline_config_path training/faster_rcnn_resnet50_coco.config --num_train_steps 100  --eval_training_data True 
+#   python model_main.py --checkpoint_dir training/Checkpoint-stellen --pipeline_config_path training/faster_rcnn_resnet50_coco.config --run_once
+#   python model_main.py --model_dir training/Checkpoint-fernsehsender --pipeline_config_path training/faster_rcnn_nas_coco.config --num_train_steps 100  --eval_training_data True 
+# 
 #   Helpful links:
 #   tensorflow.python.framework.errors_impl.NotFoundError: Failed to create a directory: training/Checkpoint\export\Servo\temp-b'1585104018'; No such file or directory
 #   Date Modified: 20200325_1055
