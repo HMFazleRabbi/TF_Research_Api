@@ -12,6 +12,8 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import os
+import cv2
+import shutil
 import io
 import pandas as pd
 import tensorflow as tf
@@ -34,6 +36,7 @@ def class_text_to_int(row_label):
     elif row_label.upper() == 'PIN':
         return 2
     else:
+        raise IOError
         None
 
 
@@ -59,6 +62,16 @@ def create_tf_example(group, path):
     classes_text = []
     classes = []
 
+    # Debug
+    dir_name="./debug/TF_Record_Images_Labelled-20200414_1147-wiegst"
+    dir_ori_name="./debug/TF_Record_Images_ORI-20200414_1147-wiegst"
+    if not (os.path.isdir(dir_name)):
+        os.makedirs(dir_name)
+    if not (os.path.isdir(dir_ori_name)):
+        os.makedirs(dir_ori_name)
+    img_path = os.path.join (dir_name, group.filename)
+    img_buffer =cv2.imread(os.path.join(path, '{}'.format(group.filename)))
+
     for index, row in group.object.iterrows():
         # Sanity check
         if (row['xmax']<row['xmin']) or (row['ymax'] <= row['ymin']):
@@ -72,11 +85,21 @@ def create_tf_example(group, path):
         xmaxs.append(row['xmax'] / width)
         ymins.append(row['ymin'] / height)
         ymaxs.append(row['ymax'] / height)
-        classes_text.append(row['class'].encode('utf8'))
+        # classes_text.append(row['class'].encode('utf8'))
+        classes_text.append(row['class'].upper().encode('utf8'))
         classes.append(class_text_to_int(row['class']))
+
+        # Debug
+        p1=(int (row['xmin']),int (row['ymin']))
+        p2=(int (row['xmax']),int (row['ymax']))
+        cv2.rectangle(img_buffer, p1,p2, (0,255,0), 1)
 
     if len(classes) < 1:
         raise IOError
+
+    # Selective option to skip
+    elif len(classes) < -1:
+        return None
 
     tf_example = tf.train.Example(features=tf.train.Features(feature={
         'image/height': dataset_util.int64_feature(height),
@@ -92,18 +115,27 @@ def create_tf_example(group, path):
         'image/object/class/text': dataset_util.bytes_list_feature(classes_text),
         'image/object/class/label': dataset_util.int64_list_feature(classes),
     }))
+
+    # Debug
+    shutil.copy(os.path.join(path, '{}'.format(group.filename)), dir_ori_name)
+    cv2.imwrite(img_path, img_buffer)
+
+    # Return
     return tf_example
 
 
 def main(_):
     writer = tf.python_io.TFRecordWriter(FLAGS.output_path)
     path = os.path.join(os.getcwd(), FLAGS.image_dir)
-    # examples = pd.read_csv(FLAGS.csv_input)
-    examples = pd.read_csv(FLAGS.csv_input).sample(frac=1).reset_index(drop=True)
+    # examples = pd.read_csv(FLAGS.csv_input).sample(frac=1).reset_index(drop=True)
+    examples = pd.read_csv(FLAGS.csv_input)
     grouped = split(examples, 'filename')
     for group in grouped:
         tf_example = create_tf_example(group, path)
-        writer.write(tf_example.SerializeToString())
+        if (tf_example ==None):
+            continue
+        else:
+            writer.write(tf_example.SerializeToString())
 
     writer.close()
     output_path = os.path.join(os.getcwd(), FLAGS.output_path)

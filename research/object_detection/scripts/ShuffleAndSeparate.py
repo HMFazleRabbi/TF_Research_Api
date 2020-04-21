@@ -8,8 +8,24 @@ from tqdm import tqdm
 import cv2
 
 
+#############################################
+#   Global Varialble
+#############################################
+# Default
+# label_dictionary ={
+#     'PIN': 0,
+#     'BODY': 1
+# }
+label_dictionary ={
+    'PIN': 2,
+}
+
+reverse_dictionary = dict([(value, key) for (key, value) in label_dictionary.items()])
 
 
+#############################################
+#   Function Definition
+#############################################
 def WriteListToFile(info_list:list, filename, mode="w"):
     ## Write the List to a .csv file
     ## Note: Since only one list, dataframe is not used 
@@ -18,6 +34,7 @@ def WriteListToFile(info_list:list, filename, mode="w"):
         for item in info_list:
             outfile.write(item) 
             outfile.write("\n")
+
 
 def read_as_list(fname):
 
@@ -36,17 +53,16 @@ def read_as_list(fname):
     # Content
     for r in content:
         xmin, ymin, xmax, ymax, class_int = list(map(lambda x: int(x), r.strip().split(',')))
-        class_lbl = 'PIN' if class_int==0 else 'BODY'
+        #class_lbl = 'PIN' if class_int==0 else 'BODY'
+        class_lbl = reverse_dictionary[class_int]
         line = "{},{},{},{},{},{},{},{}".format(base_name, w, h, class_lbl, xmin, ymin, xmax, ymax)
         all_lines.append(line)
 
     # Formatting
     return all_lines
 
-def ShuffleAndSeparateForEightChannel():
 
-    ROOT_DIR = os.getcwd()
-    ROOT_DIR = "D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_00"
+def ShuffleAndSeparateForEightChannel(root_dir):
 
 
     try:
@@ -170,6 +186,118 @@ def ShuffleAndSeparateForEightChannel():
     print("[Processing] Finish Process")
 
 
+def ShuffleAndSeparateToTrainTestSet(directory, input_img_arg="img", input_txt_arg='txt', input_test_ratio=0.1):
+
+    ROOT_DIR = directory
+    IMG_DIR = os.path.join(ROOT_DIR, input_img_arg)
+    print("Using default IMG_DIR = {}".format(IMG_DIR))
+
+    txt_DIR = os.path.join(ROOT_DIR, input_txt_arg)
+    print("Using default txt_DIR = {}".format(txt_DIR))
+
+    print("Using default input_test_ratio = {}".format(input_test_ratio))
+
+    IMG_DIR=os.path.normpath(IMG_DIR)
+    txt_DIR=os.path.normpath(txt_DIR)
+    PGM_DIR = IMG_DIR.replace('img', 'pgm')
+    WAR_DIR = IMG_DIR.replace('img', 'war')
+    TEST_DATASET_DIR = os.path.join(ROOT_DIR,"test")
+    TRAIN_DATASET_DIR = os.path.join(ROOT_DIR, "train")
+
+    ## Check if the Corresponding Directory exists 
+    if not os.path.exists(IMG_DIR):
+        raise ValueError("[Error] Directory named {} is not found. Please Check".format(os.path.basename(IMG_DIR)))
+
+    if not os.path.exists(txt_DIR):
+        raise ValueError("[Error] Directory named {} is not found. Please Check".format(os.path.basename(txt_DIR)))
+
+    if not os.path.exists(TEST_DATASET_DIR):
+        os.makedirs(TEST_DATASET_DIR)
+
+    if not os.path.exists(TRAIN_DATASET_DIR):
+        os.makedirs(TRAIN_DATASET_DIR)
+
+    # Get file list
+    txt_FILE_LIST = [f for f in glob.glob(txt_DIR + "/*.txt", recursive=True)]
+
+    ## Check if the txt dir is empty
+    if not (txt_FILE_LIST):
+        raise ValueError("[Error] Directory named {} has no .txt file. Please Check".format(os.path.basename(txt_DIR)))
+    print("[Processing] {} files are found in directory named {}"\
+        .format(len(txt_FILE_LIST), os.path.basename(txt_DIR)))
+
+    ## Shuffle the txt List
+    random.shuffle(txt_FILE_LIST)
+    test_file_num = round(float(input_test_ratio) * len(txt_FILE_LIST))
+
+    train_set = []
+    test_set = []
+
+    ## Split the dataset into two part: train_set & test_set
+    for i in range(test_file_num):
+        elem = txt_FILE_LIST.pop()
+        test_set.append(elem)
+
+    train_set = [f for f in txt_FILE_LIST]
+
+
+    # Overwrite file
+    with open (os.path.join(ROOT_DIR, "train_labels.csv"), "w") as fptr:
+        fptr.write("filename,width,height,class,xmin,ymin,xmax,ymax\n")
+    with open (os.path.join(ROOT_DIR, "test_labels.csv"), "w") as fptr:
+        fptr.write("filename,width,height,class,xmin,ymin,xmax,ymax\n")
+    print("[Processing] {} files in test set".format(len(test_set)))
+    print("[Processing] {} files in train_set".format(len(train_set)))
+
+    print("[Processing] Copying of test dataset")
+    pbar = tqdm(test_set)
+    
+    for iItems,  f in enumerate(pbar):
+        file_basename = os.path.basename(f).replace('.txt','')
+        
+        for iImg in range(8):
+
+            ext = "_" + str(iImg)
+            try:
+                shutil.copy(os.path.join(IMG_DIR, file_basename + ext + ".jpg"),                        TEST_DATASET_DIR)
+                shutil.copyfile(f,                                                                      os.path.join(TEST_DATASET_DIR, file_basename + ext +'.txt'))
+                shutil.copyfile(os.path.join(PGM_DIR, os.path.basename(f).replace(".txt", "_0.pgm")),   os.path.join(TEST_DATASET_DIR, file_basename + ext +'.pgm') )
+                shutil.copy(os.path.join(WAR_DIR, os.path.basename(f).replace(".txt", "_0.war")),       os.path.join(TEST_DATASET_DIR, file_basename + ext +'.war') )
+            except:
+                print("Error copying files:\n {}".format(f))
+                sys.exit()
+
+            # Create csv
+            boxes = read_as_list(os.path.join(TEST_DATASET_DIR, file_basename + ext +'.txt'))
+            WriteListToFile(boxes, os.path.join(ROOT_DIR, "test_labels.csv"), "a")
+        
+        pbar.set_description("Items: %d" %iItems)
+
+
+    print("[Processing] Copying of train dataset")
+    pbar = tqdm(train_set)
+    for iItems,  f in enumerate(pbar):
+        file_basename = os.path.basename(f).replace('.txt','')
+        
+        for iImg in range(8):
+            ext = "_" + str(iImg)
+            try:
+                shutil.copy(os.path.join(IMG_DIR, file_basename + ext + ".jpg"),                        TRAIN_DATASET_DIR)
+                shutil.copyfile(f,                                                                      os.path.join(TRAIN_DATASET_DIR, file_basename + ext +'.txt'))
+                shutil.copyfile(os.path.join(PGM_DIR, os.path.basename(f).replace(".txt", "_0.pgm")),   os.path.join(TRAIN_DATASET_DIR, file_basename + ext +'.pgm') )
+                shutil.copy(os.path.join(WAR_DIR, os.path.basename(f).replace(".txt", "_0.war")),       os.path.join(TRAIN_DATASET_DIR, file_basename + ext +'.war') )
+            except:
+                print("Error copying files:\n {}".format(f))
+                sys.exit()
+
+            # Create csv
+            boxes = read_as_list(os.path.join(TRAIN_DATASET_DIR, file_basename + ext +'.txt'))
+            WriteListToFile(boxes, os.path.join(ROOT_DIR, "train_labels.csv"), "a")
+        pbar.set_description("Items: %d" %iItems)
+
+    print("[Processing] Finish Process")
+
+
 def ShuffleAndSeparate():
     ROOT_DIR = os.getcwd()
 
@@ -267,9 +395,111 @@ def ShuffleAndSeparate():
     print("[Processing] Finish Process")
 
 
+def SingleImageShuffleAndSeparateToTrainTestSet(directory, input_img_arg="img", input_txt_arg='txt', input_test_ratio=0.1):
+
+    ROOT_DIR = directory
+    IMG_DIR = os.path.join(ROOT_DIR, input_img_arg)
+    print("Using default IMG_DIR = {}".format(IMG_DIR))
+
+    txt_DIR = os.path.join(ROOT_DIR, input_txt_arg)
+    print("Using default txt_DIR = {}".format(txt_DIR))
+
+    print("Using default input_test_ratio = {}".format(input_test_ratio))
+
+    IMG_DIR=os.path.normpath(IMG_DIR)
+    txt_DIR=os.path.normpath(txt_DIR)
+    TEST_DATASET_DIR = os.path.join(ROOT_DIR,"test")
+    TRAIN_DATASET_DIR = os.path.join(ROOT_DIR, "train")
+
+    ## Check if the Corresponding Directory exists 
+    if not os.path.exists(IMG_DIR):
+        raise ValueError("[Error] Directory named {} is not found. Please Check".format(os.path.basename(IMG_DIR)))
+
+    if not os.path.exists(txt_DIR):
+        raise ValueError("[Error] Directory named {} is not found. Please Check".format(os.path.basename(txt_DIR)))
+
+    if not os.path.exists(TEST_DATASET_DIR):
+        os.makedirs(TEST_DATASET_DIR)
+
+    if not os.path.exists(TRAIN_DATASET_DIR):
+        os.makedirs(TRAIN_DATASET_DIR)
+
+    # Get file list
+    txt_FILE_LIST = [f for f in glob.glob(txt_DIR + "/*.txt", recursive=True)]
+
+    ## Check if the txt dir is empty
+    if not (txt_FILE_LIST):
+        raise ValueError("[Error] Directory named {} has no .txt file. Please Check".format(os.path.basename(txt_DIR)))
+    print("[Processing] {} files are found in directory named {}"\
+        .format(len(txt_FILE_LIST), os.path.basename(txt_DIR)))
+
+    ## Shuffle the txt List
+    random.shuffle(txt_FILE_LIST)
+    test_file_num = round(float(input_test_ratio) * len(txt_FILE_LIST))
+
+    train_set = []
+    test_set = []
+
+    ## Split the dataset into two part: train_set & test_set
+    for i in range(test_file_num):
+        elem = txt_FILE_LIST.pop()
+        test_set.append(elem)
+
+    train_set = [f for f in txt_FILE_LIST]
+
+
+    # Overwrite file
+    with open (os.path.join(ROOT_DIR, "train_labels.csv"), "w") as fptr:
+        fptr.write("filename,width,height,class,xmin,ymin,xmax,ymax\n")
+    with open (os.path.join(ROOT_DIR, "test_labels.csv"), "w") as fptr:
+        fptr.write("filename,width,height,class,xmin,ymin,xmax,ymax\n")
+    print("[Processing] {} files in test set".format(len(test_set)))
+    print("[Processing] {} files in train_set".format(len(train_set)))
+
+    print("[Processing] Copying of test dataset")
+    pbar = tqdm(test_set)
+    
+    for iItems,  f in enumerate(pbar):
+        file_basename = os.path.basename(f).replace('.txt','')
+        ext = "" 
+        try:
+            shutil.copy(os.path.join(IMG_DIR, file_basename + ext + ".jpg"),                        TEST_DATASET_DIR)
+            shutil.copyfile(f,                                                                      os.path.join(TEST_DATASET_DIR, file_basename + ext +'.txt'))
+        except:
+            print("Error copying files:\n {}".format(f))
+            sys.exit()
+
+        # Create csv
+        boxes = read_as_list(os.path.join(TEST_DATASET_DIR, file_basename + ext +'.txt'))
+        WriteListToFile(boxes, os.path.join(ROOT_DIR, "test_labels.csv"), "a")
+        
+        pbar.set_description("Items: %d" %iItems)
+
+    print("[Processing] Copying of train dataset")
+    pbar = tqdm(train_set)
+    for iItems,  f in enumerate(pbar):
+        file_basename = os.path.basename(f).replace('.txt','')        
+        ext = ""
+        try:
+            shutil.copy(os.path.join(IMG_DIR, file_basename + ext + ".jpg"),                        TRAIN_DATASET_DIR)
+            shutil.copyfile(f,                                                                      os.path.join(TRAIN_DATASET_DIR, file_basename + ext +'.txt'))
+        except:
+            print("Error copying files:\n {}".format(f))
+            sys.exit()
+
+        # Create csv
+        boxes = read_as_list(os.path.join(TRAIN_DATASET_DIR, file_basename + ext +'.txt'))
+        WriteListToFile(boxes, os.path.join(ROOT_DIR, "train_labels.csv"), "a")
+        pbar.set_description("Items: %d" %iItems)
+
+    print("[Processing] Finish Process")
+
+
 def main():
     # ShuffleAndSeparate()
-    ShuffleAndSeparateForEightChannel()
+    ROOT_DIR = "D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_00"
+    ShuffleAndSeparateForEightChannel(ROOT_DIR)
+
 
 if __name__ == '__main__':
     main()
