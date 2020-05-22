@@ -27,7 +27,13 @@
 #   python model_main.py --model_dir training/Checkpoint-wichtig --pipeline_config_path training/faster_rcnn_resnet50_coco.config --num_train_steps 10000  --eval_training_data True 
 #   python model_main.py --model_dir training/Checkpoint-erdberen --pipeline_config_path training/faster_rcnn_resnet50_coco.config --num_train_steps 10000  --eval_training_data True 
 #   python model_main.py --model_dir training/Checkpoint-ananas --pipeline_config_path training/faster_rcnn_resnet50_coco.config --num_train_steps 10000  --eval_training_data True 
-
+#   python model_main.py --model_dir training/Checkpoint-gekochtes --pipeline_config_path training/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config --num_train_steps 10000  --eval_training_data True 
+#   python model_main.py --model_dir training/Checkpoint-bezahlen --pipeline_config_path training/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config --num_train_steps 5000  --eval_training_data True 
+#   python model_main.py --model_dir training/Checkpoint-bezahlen-3 --pipeline_config_path training/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config --num_train_steps 10000  --eval_training_data True 
+# 
+#   Evaluation Sample Command:
+#   https://stackoverflow.com/questions/50951181/how-to-run-eval-py-job-for-tensorflow-object-detection-models
+#   python model_main.py --checkpoint_dir training/Checkpoint-gekochtes-5k --pipeline_config_path training/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config --run_once
 # 
 #   Helpful links:
 #   tensorflow.python.framework.errors_impl.NotFoundError: Failed to create a directory: training/Checkpoint\export\Servo\temp-b'1585104018'; No such file or directory
@@ -41,6 +47,7 @@ from __future__ import division
 from __future__ import print_function
 
 from absl import flags
+import os
 
 import tensorflow as tf
 
@@ -82,6 +89,11 @@ def main(unused_argv):
   flags.mark_flag_as_required('model_dir')
   flags.mark_flag_as_required('pipeline_config_path')
   config = tf.estimator.RunConfig(model_dir=FLAGS.model_dir)
+
+  # Added -20200521_0941@Fazle
+  if not (os.path.exists(FLAGS.model_dir)):
+    os.makedirs(os.path.join(FLAGS.model_dir, 'export'))
+    os.makedirs(os.path.join(FLAGS.model_dir, 'export', 'Servo'))
 
   train_and_eval_dict = model_lib.create_estimator_and_inputs(
       run_config=config,

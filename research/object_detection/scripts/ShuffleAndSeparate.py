@@ -16,10 +16,18 @@ import cv2
 #     'PIN': 0,
 #     'BODY': 1
 # }
+# label_dictionary ={
+#     'PIN': 2,
+# }
 label_dictionary ={
-    'PIN': 2,
+    'PIN': 0,
+    'BODY': 1,
+    'PIN_NL': 2,
+    'PIN_FLAT': 3,
+    'PIN_GULL': 4,
+    'PIN_JLEAD':5
+    
 }
-
 reverse_dictionary = dict([(value, key) for (key, value) in label_dictionary.items()])
 
 
@@ -52,9 +60,15 @@ def read_as_list(fname):
 
     # Content
     for r in content:
-        xmin, ymin, xmax, ymax, class_int = list(map(lambda x: int(x), r.strip().split(',')))
-        #class_lbl = 'PIN' if class_int==0 else 'BODY'
-        class_lbl = reverse_dictionary[class_int]
+        try:
+            xmin, ymin, xmax, ymax, class_int = list(map(lambda x: int(x), r.strip().split(',')))
+            class_lbl = reverse_dictionary[class_int]
+        except :
+            xmin, ymin, xmax, ymax = list(map(lambda x: int(x), r.strip().split(',')[:-1] ))
+            class_lbl = r.strip().split(',')[-1].upper()
+            class_int = label_dictionary [class_lbl]
+        
+        
         line = "{},{},{},{},{},{},{},{}".format(base_name, w, h, class_lbl, xmin, ymin, xmax, ymax)
         all_lines.append(line)
 

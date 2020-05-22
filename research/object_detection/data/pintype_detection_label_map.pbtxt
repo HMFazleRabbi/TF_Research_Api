@@ -1,0 +1,24 @@
+item {
+  id: 1
+  name: 'BODY'
+}
+
+item {
+  id: 2
+  name: 'PIN_NL'
+}
+
+item {
+  id: 3
+  name: 'PIN_FLAT'
+}
+
+item {
+  id: 4
+  name: 'PIN_GULL'
+}
+
+item {
+  id: 5
+  name: 'PIN_JLEAD'
+}

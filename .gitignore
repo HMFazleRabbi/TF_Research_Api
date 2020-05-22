@@ -105,6 +105,9 @@ samples/outreach/blogs/segmentation_blogpost/carvana-image-masking-challenge/
 research/object_detection/doc/Trash/
 research/object_detection/images/
 research/object_detection/inference_graph/
-research/object_detection/training/Checkpoint-3/
 research/object_detection/debug/
-research/object_detection/scripts/train/
+research/object_detection/training/
+research/object_detection/scripts/Archive/
+research/object_detection/scripts/Cpp_Files_Aitf_Engine_MainB/Aitf_Engine_MainB/.svn/pristine/b7/b73d2727e142372a1f5db73fdbdc13924ecb4a7e.svn-base
+research/object_detection/scripts/Cpp_Files_Aitf_Engine_MainB/
+research/object_detection/scripts/desktop.ini

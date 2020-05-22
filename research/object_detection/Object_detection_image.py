@@ -26,12 +26,18 @@ import sys
 sys.path.append("..")
 
 # Import utilites
-from utils import label_map_util
+from utils import label_map_util, get_label_map_dict
 from utils import visualization_utils as vis_util
 
 # Name of the directory containing the object detection module we're using
-MODEL_NAME = 'inference_graph/V-05-Unterrichte'
-IMAGE_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_00/train/9608_t_1_90_r_1u303_1.jpg'
+MODEL_NAME = 'inference_graph/V-12-frittieren' 
+IMAGE_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/scripts/Test/0.jpg'
+MODEL_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/inference_graph/V-13-gekochtes-25k'
+IMAGE_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_03/Mixed/train_labels_lt_800/852RN5302TFT008_11_6_2-u903.jpg'
+MODEL_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/inference_graph/V-May-01-Checkpoint-bezahlen-1'
+IMAGE_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_04/train/5e97d87531f3430c6e99f120.jpg'
+MODEL_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/inference_graph/V-May-02-Checkpoint-bezahlen-3'
+IMAGE_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_04/train/5e97d87531f3430c6e99f127.jpg'
 
 # Grab path to current working directory
 CWD_PATH = os.getcwd()
@@ -41,7 +47,7 @@ CWD_PATH = os.getcwd()
 PATH_TO_CKPT = os.path.join(CWD_PATH,MODEL_NAME,'frozen_inference_graph.pb')
 
 # Path to label map file
-PATH_TO_LABELS = os.path.join(CWD_PATH,'training','object-detection.pbtxt')
+PATH_TO_LABELS = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/data/lead_detection_label_map.pbtxt'
 
 # Path to image
 PATH_TO_IMAGE = os.path.join(CWD_PATH,IMAGE_NAME)
@@ -112,7 +118,7 @@ vis_util.visualize_boxes_and_labels_on_image_array(
     line_thickness=3,
     skip_scores=True,
     skip_labels=True,
-    min_score_thresh=0.60)
+    min_score_thresh=0.30)
 
 # All the results have been drawn on image. Now display the image.
 cv2.imshow('Object detector', image)

@@ -3,9 +3,21 @@ Usage:
   # From tensorflow/models/
   # Create train data:
   python generate_tfrecord.py --csv_input=images/train_labels.csv --image_dir=images/train --output_path=images/train.record
+  python generate_tfrecord.py --csv_input=images/H_Dataset_05/train_labels.csv --image_dir=images/H_Dataset_05/train --output_path=images/H_Dataset_05/train.record
+  python generate_tfrecord.py --csv_input=images/H_Dataset_05/gray/train_labels.csv --image_dir=images/H_Dataset_05/gray/train --output_path=images/H_Dataset_05/gray/train.record
+  python generate_tfrecord.py --csv_input=images/H_Dataset_05/pintype/train_labels.csv --image_dir=images/H_Dataset_05/pintype/train --output_path=images/H_Dataset_05/pintype/train.record
+  python generate_tfrecord.py --csv_input=D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_03/Mixed/merged_train_labels_lt_800.csv --image_dir=D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_03/Mixed/train_labels_lt_800 --output_path=images/train.record
+  python generate_tfrecord.py --csv_input=images/H_Dataset_05/pintype/train_labels.csv --image_dir=images/H_Dataset_05/pintype/train --output_path=images/H_Dataset_05/pintype/train.record
 
   # Create test data:
   python generate_tfrecord.py --csv_input=images/test_labels.csv  --image_dir=images/test --output_path=images/test.record
+  python generate_tfrecord.py --csv_input=images/H_Dataset_05/test_labels.csv --image_dir=images/H_Dataset_05/test --output_path=images/H_Dataset_05/test.record
+
+  python generate_tfrecord.py --csv_input=D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_03/Mixed/merged_test_labels_lt_800.csv  --image_dir=D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_03/Mixed/test_labels_lt_800 --output_path=images/test.record
+  python generate_tfrecord.py --csv_input=D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_03/Mixed/merged_train+test_labels_lt_800.csv  --image_dir=D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_03/Mixed/merged_train+test_labels_lt_800 --output_path=images/merged_train+test_labels_lt_800.record
+  python generate_tfrecord.py --csv_input=images/H_Dataset_05/pintype/test_labels.csv --image_dir=images/H_Dataset_05/pintype/test --output_path=images/H_Dataset_05/pintype/test.record
+
+
 """
 from __future__ import division
 from __future__ import print_function
@@ -21,6 +33,7 @@ import tensorflow as tf
 from PIL import Image
 from object_detection.utils import dataset_util
 from collections import namedtuple, OrderedDict
+from utils import label_map_util
 
 flags = tf.app.flags
 flags.DEFINE_string('csv_input', '', 'Path to the CSV input')
@@ -28,17 +41,55 @@ flags.DEFINE_string('image_dir', '', 'Path to the image directory')
 flags.DEFINE_string('output_path', '', 'Path to output TFRecord')
 FLAGS = flags.FLAGS
 
+#############################################
+#   Global Varialble
+#############################################
+# Default
+# label_dictionary ={
+#     'PIN': 0,
+#     'BODY': 1
+# }
+# label_dictionary ={
+#     'PIN': 2,
+# }
+# label_dictionary ={
+#     'PIN': 0,
+#     'BODY': 1,
+#     'PIN_NL': 2,
+#     'PIN_FLAT': 3,
+#     'PIN_GULL': 4,
+#     'PIN_JLEAD':5
+    
+# }
+
+
+# Path to label map file
+PATH_TO_LABELS = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/data/pintype_detection_label_map.pbtxt'
+
+# Load the label map.
+# Label maps map indices to category names, so that when our convolution
+# network predicts `5`, we know that this corresponds to `king`.
+# Here we use internal utility functions, but anything that returns a
+# dictionary mapping integers to appropriate string labels would be fine
+label_dictionary=label_map_util.get_label_map_dict(PATH_TO_LABELS)
+
 
 # TO-DO replace this with label map
 def class_text_to_int(row_label):
-    if row_label.upper() == 'BODY':
-        return 1
-    elif row_label.upper() == 'PIN':
-        return 2
+    if row_label.upper() in label_dictionary:
+        return label_dictionary[row_label.upper()]
     else:
         raise IOError
         None
 
+    # Commented by fazle@20200522_1115 and switching to label dictionary
+    # if row_label.upper() == 'BODY':
+    #     return 1
+    # elif row_label.upper() == 'PIN':
+    #     return 2
+    # else:
+    #     raise IOError
+    #     None
 
 def split(df, group):
     data = namedtuple('data', ['filename', 'object'])
@@ -63,8 +114,8 @@ def create_tf_example(group, path):
     classes = []
 
     # Debug
-    dir_name="./debug/TF_Record_Images_Labelled-20200414_1147-wiegst"
-    dir_ori_name="./debug/TF_Record_Images_ORI-20200414_1147-wiegst"
+    dir_name="./debug/TF_Record_Images_Labelled-20200520_1806"
+    dir_ori_name="./debug/TF_Record_Images_ORI-20200520_1806"
     if not (os.path.isdir(dir_name)):
         os.makedirs(dir_name)
     if not (os.path.isdir(dir_ori_name)):
