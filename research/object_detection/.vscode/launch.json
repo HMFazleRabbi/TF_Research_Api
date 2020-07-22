@@ -13,19 +13,20 @@
         },
 
         {
-            "name": "Python: generate_tfrecord.py --csv_input=images/test_labels.csv  --image_dir=images/test --output_path=images/test.record",
+            "name": "Python: generate_tfrecord.py ",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/generate_tfrecord.py",
-            "args" : ["--csv_input", "images/test_labels.csv", "--image_dir", "images/test", "--output_path", "images/test.record"] //python generate_tfrecord.py --csv_input=images/test_labels.csv  --image_dir=images/test --output_path=test.record
+            // "args" : ["--csv_input", "images/test_labels.csv", "--image_dir", "images/test", "--output_path", "images/test.record"] //python generate_tfrecord.py --csv_input=images/test_labels.csv  --image_dir=images/test --output_path=test.record
+            // "args" : ["--csv_input", "images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC-Multiline/test_labels.csv", "--image_dir", "images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC-Multiline/test", "--output_path", "images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC-Multiline/test.record"] 
+            // "args" : ["--csv_input", "images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC-Multiline/train_labels.csv", "--image_dir", "images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC-Multiline/train", "--output_path", "images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC-Multiline/train.record"] 
+            // "args" : ["--csv_input", "images/H_Dataset_09/DB_09_V01/train_labels.csv", "--image_dir", "images/H_Dataset_09/DB_09_V01/train", "--output_path", "images/H_Dataset_09/DB_09_V01/train.record"] 
+            //  "args" : ["--csv_input", "images/H_Dataset_09/DB_09_V02/DB_Updater/train_labels.csv", "--image_dir", "images/H_Dataset_09/DB_09_V02/DB_Updater/train", "--output_path", "images/H_Dataset_09/DB_09_V02/DB_Updater/train.record"] 
+            //  "args" : ["--csv_input", "images/H_Dataset_09/DB_09_V03/DB_Updater/train_labels.csv", "--image_dir", "images/H_Dataset_09/DB_09_V03/DB_Updater/train", "--output_path", "images/H_Dataset_09/DB_09_V03/DB_Updater/train.record"] 
+            "args" : ["--csv_input", "images/H_Dataset_09/DB_09_V03/DB_Updater/test_labels.csv", "--image_dir", "images/H_Dataset_09/DB_09_V03/DB_Updater/test", "--output_path", "images/H_Dataset_09/DB_09_V03/DB_Updater/test.record"] 
+            
         },
 
-        {
-            "name": "Python: generate_tfrecord.py --csv_input=images/train_labels.csv  --image_dir=images/train --output_path=images/train.record",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/generate_tfrecord.py",
-            "args" : ["--csv_input", "images/train_labels.csv", "--image_dir", "images/train", "--output_path", "images/train.record"] //python generate_tfrecord.py --csv_input=images/test_labels.csv  --image_dir=images/test --output_path=test.record
-        },        
+       
     ]
 }

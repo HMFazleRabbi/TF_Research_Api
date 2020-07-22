@@ -13,21 +13,23 @@ import cv2
 #############################################
 # Default
 # label_dictionary ={
-#     'PIN': 0,
+#     'PINARRAY': 0,
 #     'BODY': 1
 # }
-# label_dictionary ={
-#     'PIN': 2,
-# }
 label_dictionary ={
-    'PIN': 0,
     'BODY': 1,
-    'PIN_NL': 2,
-    'PIN_FLAT': 3,
-    'PIN_GULL': 4,
-    'PIN_JLEAD':5
-    
+    'PIN': 2,
 }
+
+# label_dictionary ={
+#     'PIN': 0,
+#     'BODY': 1,
+#     'PIN_NL': 2,
+#     'PIN_FLAT': 3,
+#     'PIN_GULL': 4,
+#     'PIN_JLEAD':5
+    
+# }
 reverse_dictionary = dict([(value, key) for (key, value) in label_dictionary.items()])
 
 
@@ -152,9 +154,8 @@ def ShuffleAndSeparateForEightChannel(root_dir):
     print("[Processing] {} files in train_set".format(len(train_set)))
 
     print("[Processing] Moving of test dataset")
-    pbar = tqdm(test_set)
     
-    for iItems,  f in enumerate(pbar):
+    for iItems,  f in enumerate(test_set):
         file_basename = os.path.basename(f).replace('.txt','')
         
         for iImg in range(8):
@@ -173,12 +174,10 @@ def ShuffleAndSeparateForEightChannel(root_dir):
             boxes = read_as_list(os.path.join(TEST_DATASET_DIR, file_basename + ext +'.txt'))
             WriteListToFile(boxes, os.path.join(ROOT_DIR, "test_labels.csv"), "a")
         
-        pbar.set_description("Items: %d" %iItems)
 
 
     print("[Processing] Moving of train dataset")
-    pbar = tqdm(train_set)
-    for iItems,  f in enumerate(pbar):
+    for iItems,  f in enumerate(train_set):
         file_basename = os.path.basename(f).replace('.txt','')
         
         for iImg in range(8):
@@ -195,7 +194,6 @@ def ShuffleAndSeparateForEightChannel(root_dir):
             # Create csv
             boxes = read_as_list(os.path.join(TRAIN_DATASET_DIR, file_basename + ext +'.txt'))
             WriteListToFile(boxes, os.path.join(ROOT_DIR, "train_labels.csv"), "a")
-        pbar.set_description("Items: %d" %iItems)
 
     print("[Processing] Finish Process")
 
@@ -264,9 +262,8 @@ def ShuffleAndSeparateToTrainTestSet(directory, input_img_arg="img", input_txt_a
     print("[Processing] {} files in train_set".format(len(train_set)))
 
     print("[Processing] Copying of test dataset")
-    pbar = tqdm(test_set)
     
-    for iItems,  f in enumerate(pbar):
+    for iItems,  f in enumerate(test_set):
         file_basename = os.path.basename(f).replace('.txt','')
         
         for iImg in range(8):
@@ -285,12 +282,10 @@ def ShuffleAndSeparateToTrainTestSet(directory, input_img_arg="img", input_txt_a
             boxes = read_as_list(os.path.join(TEST_DATASET_DIR, file_basename + ext +'.txt'))
             WriteListToFile(boxes, os.path.join(ROOT_DIR, "test_labels.csv"), "a")
         
-        pbar.set_description("Items: %d" %iItems)
 
 
     print("[Processing] Copying of train dataset")
-    pbar = tqdm(train_set)
-    for iItems,  f in enumerate(pbar):
+    for iItems,  f in enumerate(train_set):
         file_basename = os.path.basename(f).replace('.txt','')
         
         for iImg in range(8):
@@ -307,7 +302,6 @@ def ShuffleAndSeparateToTrainTestSet(directory, input_img_arg="img", input_txt_a
             # Create csv
             boxes = read_as_list(os.path.join(TRAIN_DATASET_DIR, file_basename + ext +'.txt'))
             WriteListToFile(boxes, os.path.join(ROOT_DIR, "train_labels.csv"), "a")
-        pbar.set_description("Items: %d" %iItems)
 
     print("[Processing] Finish Process")
 
@@ -392,19 +386,15 @@ def ShuffleAndSeparate():
     print("[Processing] {} files in train_set".format(len(train_set)))
 
     print("[Processing] Moving of test dataset")
-    pbar = tqdm(test_set)
-    for iItems,  f in enumerate(pbar):
+    for iItems,  f in enumerate(test_set):
         shutil.copy(f,TEST_DATASET_DIR)
         shutil.copy(os.path.join(IMG_DIR, os.path.basename(f).replace(".xml",".jpg")), TEST_DATASET_DIR)
-        pbar.set_description("Items: %.2f" %iItems)
 
 
     print("[Processing] Moving of train dataset")
-    pbar = tqdm(train_set)
-    for iItems,  f in enumerate(pbar):
+    for iItems,  f in enumerate(train_set):
         shutil.copy(f,TRAIN_DATASET_DIR)
         shutil.copy(os.path.join(IMG_DIR, os.path.basename(f).replace(".xml",".jpg")), TRAIN_DATASET_DIR)
-        pbar.set_description("Items: %.2f" %iItems)
 
     print("[Processing] Finish Process")
 
@@ -471,9 +461,8 @@ def SingleImageShuffleAndSeparateToTrainTestSet(directory, input_img_arg="img", 
     print("[Processing] {} files in train_set".format(len(train_set)))
 
     print("[Processing] Copying of test dataset")
-    pbar = tqdm(test_set)
     
-    for iItems,  f in enumerate(pbar):
+    for iItems,  f in enumerate(test_set):
         file_basename = os.path.basename(f).replace('.txt','')
         ext = "" 
         try:
@@ -487,11 +476,9 @@ def SingleImageShuffleAndSeparateToTrainTestSet(directory, input_img_arg="img", 
         boxes = read_as_list(os.path.join(TEST_DATASET_DIR, file_basename + ext +'.txt'))
         WriteListToFile(boxes, os.path.join(ROOT_DIR, "test_labels.csv"), "a")
         
-        pbar.set_description("Items: %d" %iItems)
 
     print("[Processing] Copying of train dataset")
-    pbar = tqdm(train_set)
-    for iItems,  f in enumerate(pbar):
+    for iItems,  f in enumerate(train_set):
         file_basename = os.path.basename(f).replace('.txt','')        
         ext = ""
         try:
@@ -504,7 +491,6 @@ def SingleImageShuffleAndSeparateToTrainTestSet(directory, input_img_arg="img", 
         # Create csv
         boxes = read_as_list(os.path.join(TRAIN_DATASET_DIR, file_basename + ext +'.txt'))
         WriteListToFile(boxes, os.path.join(ROOT_DIR, "train_labels.csv"), "a")
-        pbar.set_description("Items: %d" %iItems)
 
     print("[Processing] Finish Process")
 

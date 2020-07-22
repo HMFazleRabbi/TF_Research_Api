@@ -26,7 +26,7 @@ import sys
 sys.path.append("..")
 
 # Import utilites
-from utils import label_map_util, get_label_map_dict
+from utils import label_map_util    #, get_label_map_dict
 from utils import visualization_utils as vis_util
 
 # Name of the directory containing the object detection module we're using
@@ -36,8 +36,15 @@ MODEL_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/inf
 IMAGE_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_03/Mixed/train_labels_lt_800/852RN5302TFT008_11_6_2-u903.jpg'
 MODEL_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/inference_graph/V-May-01-Checkpoint-bezahlen-1'
 IMAGE_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_04/train/5e97d87531f3430c6e99f120.jpg'
-MODEL_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/inference_graph/V-May-02-Checkpoint-bezahlen-3'
-IMAGE_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_04/train/5e97d87531f3430c6e99f127.jpg'
+MODEL_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/inference_graph/V-May-03-Checkpoint-Ausgabe-1'
+IMAGE_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_05/pintype/test/5e97d88431f3430c6e9a36b2.jpg'
+MODEL_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/inference_graph/V-May-04-Checkpoint-Ihr-2'
+IMAGE_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_05/pintype/test/5e97d88431f3430c6e9a36b2.jpg'
+IMAGE_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_07/raw/SOIC/5e97d88531f3430c6e9a3a7c.jpg'
+MODEL_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/inference_graph/V-Jun-05-Checkpoint-Sie-1'
+IMAGE_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/debug/images_out-V-Jun-05-Checkpoint-Sie-1/distorted/12.jpg'
+MODEL_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/inference_graph/V-Jun-16-Checkpoint-Geschlafen-1'
+IMAGE_NAME = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_08/H_Dataset_02_PinArray/QFP+SOIC/train/9611GCR2-T-7_33_1_1-u502.jpg'
 
 # Grab path to current working directory
 CWD_PATH = os.getcwd()
@@ -47,13 +54,17 @@ CWD_PATH = os.getcwd()
 PATH_TO_CKPT = os.path.join(CWD_PATH,MODEL_NAME,'frozen_inference_graph.pb')
 
 # Path to label map file
+PATH_TO_LABELS = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/data/pintype_detection_label_map.pbtxt'
+PATH_TO_LABELS = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/data/pinarray_detection_label_map.pbtxt'
 PATH_TO_LABELS = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/data/lead_detection_label_map.pbtxt'
+
 
 # Path to image
 PATH_TO_IMAGE = os.path.join(CWD_PATH,IMAGE_NAME)
 
 # Number of classes the object detector can identify
-NUM_CLASSES = 2
+label_dictionary=label_map_util.get_label_map_dict(PATH_TO_LABELS)
+NUM_CLASSES = len(label_dictionary)
 
 # Load the label map.
 # Label maps map indices to category names, so that when our convolution
@@ -115,9 +126,9 @@ vis_util.visualize_boxes_and_labels_on_image_array(
     category_index,
     use_normalized_coordinates=True,
     max_boxes_to_draw=256,
-    line_thickness=3,
-    skip_scores=True,
-    skip_labels=True,
+    line_thickness=1,
+    skip_scores=False,
+    skip_labels=False,
     min_score_thresh=0.30)
 
 # All the results have been drawn on image. Now display the image.

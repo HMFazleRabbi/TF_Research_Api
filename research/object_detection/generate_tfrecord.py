@@ -8,6 +8,12 @@ Usage:
   python generate_tfrecord.py --csv_input=images/H_Dataset_05/pintype/train_labels.csv --image_dir=images/H_Dataset_05/pintype/train --output_path=images/H_Dataset_05/pintype/train.record
   python generate_tfrecord.py --csv_input=D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_03/Mixed/merged_train_labels_lt_800.csv --image_dir=D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_03/Mixed/train_labels_lt_800 --output_path=images/train.record
   python generate_tfrecord.py --csv_input=images/H_Dataset_05/pintype/train_labels.csv --image_dir=images/H_Dataset_05/pintype/train --output_path=images/H_Dataset_05/pintype/train.record
+  python generate_tfrecord.py --csv_input=images/H_Dataset_06/train_labels.csv --image_dir=images/H_Dataset_06/train --output_path=images/H_Dataset_06/train.record
+  python generate_tfrecord.py --csv_input=images/H_Dataset_07/extracted/MERGED/train_labels.csv --image_dir=images/H_Dataset_07/extracted/MERGED/train --output_path=images/H_Dataset_07/extracted/MERGED/train.record
+  python generate_tfrecord.py --csv_input=images/H_Dataset_08/H_Dataset_02_PinArray/QFP+SOIC/train_labels.csv --image_dir=images/H_Dataset_08/H_Dataset_02_PinArray/QFP+SOIC/train --output_path=images/H_Dataset_08/H_Dataset_02_PinArray/QFP+SOIC/train.record
+  python generate_tfrecord.py --csv_input=images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC/train_labels.csv --image_dir=images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC/train --output_path=images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC/train.record
+  python generate_tfrecord.py --csv_input=images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC-Fragmented/train_labels.csv --image_dir=images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC-Fragmented/train --output_path=images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC-Fragmented/train.record
+  python generate_tfrecord.py --csv_input=images/H_Dataset_08/H_Dataset_02_PinOnly/Testcase-lt-600/train_labels.csv --image_dir=images/H_Dataset_08/H_Dataset_02_PinOnly/Testcase-lt-600/train --output_path=images/H_Dataset_08/H_Dataset_02_PinOnly/Testcase-lt-600/train.record
 
   # Create test data:
   python generate_tfrecord.py --csv_input=images/test_labels.csv  --image_dir=images/test --output_path=images/test.record
@@ -16,6 +22,9 @@ Usage:
   python generate_tfrecord.py --csv_input=D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_03/Mixed/merged_test_labels_lt_800.csv  --image_dir=D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_03/Mixed/test_labels_lt_800 --output_path=images/test.record
   python generate_tfrecord.py --csv_input=D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_03/Mixed/merged_train+test_labels_lt_800.csv  --image_dir=D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/images/H_Dataset_03/Mixed/merged_train+test_labels_lt_800 --output_path=images/merged_train+test_labels_lt_800.record
   python generate_tfrecord.py --csv_input=images/H_Dataset_05/pintype/test_labels.csv --image_dir=images/H_Dataset_05/pintype/test --output_path=images/H_Dataset_05/pintype/test.record
+  python generate_tfrecord.py --csv_input=images/H_Dataset_06/test_labels.csv --image_dir=images/H_Dataset_06/test --output_path=images/H_Dataset_06/test.record
+  python generate_tfrecord.py --csv_input=images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC/test_labels.csv --image_dir=images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC/test --output_path=images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC/test.record
+  python generate_tfrecord.py --csv_input=images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC-Fragmented/test_labels.csv --image_dir=images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC-Fragmented/test --output_path=images/H_Dataset_08/H_Dataset_02_PinOnly/QFP+SOIC-Fragmented/test.record
 
 
 """
@@ -65,6 +74,9 @@ FLAGS = flags.FLAGS
 
 # Path to label map file
 PATH_TO_LABELS = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/data/pintype_detection_label_map.pbtxt'
+PATH_TO_LABELS = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/data/pinarray_detection_label_map.pbtxt'
+PATH_TO_LABELS = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/data/pinonly_detection_label_map.pbtxt'
+PATH_TO_LABELS = 'D:/FZ_WS/JyNB/TF_Research_Api_LD_2_0/research/object_detection/data/lead_detection_label_map.pbtxt'
 
 # Load the label map.
 # Label maps map indices to category names, so that when our convolution
@@ -76,6 +88,7 @@ label_dictionary=label_map_util.get_label_map_dict(PATH_TO_LABELS)
 
 # TO-DO replace this with label map
 def class_text_to_int(row_label):
+    
     if row_label.upper() in label_dictionary:
         return label_dictionary[row_label.upper()]
     else:

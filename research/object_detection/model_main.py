@@ -30,6 +30,29 @@
 #   python model_main.py --model_dir training/Checkpoint-gekochtes --pipeline_config_path training/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config --num_train_steps 10000  --eval_training_data True 
 #   python model_main.py --model_dir training/Checkpoint-bezahlen --pipeline_config_path training/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config --num_train_steps 5000  --eval_training_data True 
 #   python model_main.py --model_dir training/Checkpoint-bezahlen-3 --pipeline_config_path training/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config --num_train_steps 10000  --eval_training_data True 
+#   python model_main.py --model_dir training/Checkpoint-Ausgabe-1 --pipeline_config_path training/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config --num_train_steps 20000  --eval_training_data True 
+#   python model_main.py --model_dir training/Checkpoint-Ihr-3 --pipeline_config_path training/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config --num_train_steps 75000  --eval_training_data True 
+#   python model_main.py --model_dir training/Checkpoint-Ihr-6 --pipeline_config_path training/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config --num_train_steps 100000  --eval_training_data True 
+#   python model_main.py --model_dir training/Checkpoint-Sie-1 --pipeline_config_path training/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config  --eval_training_data True 
+#   python model_main.py --model_dir training/Checkpoint-Mantell-1 --pipeline_config_path training/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config  --eval_training_data True 
+#   python model_main.py --model_dir training/Checkpoint-Mantell-2 --pipeline_config_path training/faster_rcnn_resnet50_coco.config  --eval_training_data True 
+#   python model_main.py --model_dir training/Checkpoint-Mantell-4 --pipeline_config_path training/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config  --eval_training_data True 
+#   python model_main.py --model_dir training/Checkpoint-Mantell-6 --pipeline_config_path training/local-faster_rcnn_resnet50_coco.config  --eval_training_data True 
+#   python model_main.py --model_dir training/Checkpoint-Mantell-8 --pipeline_config_path training/Mantell-8.config  --eval_training_data True 
+#   python model_main.py --model_dir training/Checkpoint-Mantell-12 --eval_training_data True --pipeline_config_path training/faster_rcnn_resnet50_coco.config
+#   python model_main.py --model_dir training/Checkpoint-Mantell-13 --eval_training_data True --pipeline_config_path training/faster_rcnn_resnet50_coco.config
+#   python model_main.py --model_dir training/Checkpoint-Testcase-lt-600-1 --eval_training_data True --pipeline_config_path training/faster_rcnn_resnet50_coco.config
+#   python model_main.py --model_dir training/Checkpoint-Brille --eval_training_data True --pipeline_config_path training/Checkpoint-Brille/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config
+#   python model_main.py --model_dir training/Checkpoint-Hemd-2 --eval_training_data True --pipeline_config_path training/Checkpoint-Hemd-2/faster_rcnn_resnet50_coco.config
+#   python model_main.py --model_dir training/Checkpoint-Hemd-4 --eval_training_data True --pipeline_config_path training/Checkpoint-Hemd-4/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config
+#   python model_main.py --model_dir training/Checkpoint-Hemd-3 --eval_training_data True --pipeline_config_path training/Checkpoint-Hemd-3/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config
+#   python model_main.py --model_dir training/Checkpoint-Hemd-5 --eval_training_data True --pipeline_config_path training/Checkpoint-Hemd-5/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config
+#   python model_main.py --model_dir training/Checkpoint-Hemd-6 --eval_training_data True --pipeline_config_path training/Checkpoint-Hemd-6/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config
+#   python model_main.py --model_dir training/Checkpoint-Hemd-7 --eval_training_data True --pipeline_config_path training/Checkpoint-Hemd-7/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config
+#   python model_main.py --model_dir training/Checkpoint-Hemd-9 --eval_training_data True --pipeline_config_path training/Checkpoint-Hemd-9/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config
+#   python model_main.py --model_dir training/Checkpoint-Hemd-10 --eval_training_data True --pipeline_config_path training/Checkpoint-Hemd-10/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync.config
+
+
 # 
 #   Evaluation Sample Command:
 #   https://stackoverflow.com/questions/50951181/how-to-run-eval-py-job-for-tensorflow-object-detection-models
@@ -88,7 +111,10 @@ FLAGS = flags.FLAGS
 def main(unused_argv):
   flags.mark_flag_as_required('model_dir')
   flags.mark_flag_as_required('pipeline_config_path')
-  config = tf.estimator.RunConfig(model_dir=FLAGS.model_dir)
+  gpu_id=0 #Default: 0
+  gpu_options = tf.GPUOptions(visible_device_list=str(gpu_id))
+  gpu_config = tf.ConfigProto(gpu_options=gpu_options)
+  config = tf.estimator.RunConfig(model_dir=FLAGS.model_dir, session_config=gpu_config)
 
   # Added -20200521_0941@Fazle
   if not (os.path.exists(FLAGS.model_dir)):
